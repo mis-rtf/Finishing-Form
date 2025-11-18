@@ -8,9 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
   passAlterContainer.style.display = 'none';
   passAlterContainer.innerHTML = `
     <label for="passPcs">Pass Pcs:</label>
-    <input type="number" id="passPcs" name="passPcs"><br><br>
-    <label for="alterPcs">Alter Pcs:</label>
-    <input type="number" id="alterPcs" name="alterPcs"><br><br>
+  <input type="number" id="passPcs" name="passPcs" style="margin-bottom: 8px;"><br>
+
+  <label for="alterPcs">Alter Pcs:</label>
+  <input type="number" id="alterPcs" name="alterPcs" style="margin-bottom: 8px;"><br>
+
+  <label for="totalPics">Total Pcs:</label>
+  <input type="number" id="totalPics" name="totalPics" readonly style="margin-bottom: 8px;">
   `;
 
   const workTypeField = document.getElementById('worktype');
