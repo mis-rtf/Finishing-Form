@@ -7,15 +7,22 @@ document.addEventListener('DOMContentLoaded', () => {
   passAlterContainer.id = 'passAlterContainer';
   passAlterContainer.style.display = 'none';
   passAlterContainer.innerHTML = `
+  <div id="passPcsGroup">
     <label for="passPcs">Pass Pcs:</label>
-  <input type="number" id="passPcs" name="passPcs" style="margin-bottom: 8px;"><br>
+    <input type="number" id="passPcs" name="passPcs" style="margin-bottom: 8px;"><br>
+  </div>
 
-  <label for="alterPcs">Alter Pcs:</label>
-  <input type="number" id="alterPcs" name="alterPcs" style="margin-bottom: 8px;"><br>
+  <div id="alterPcsGroup">
+    <label for="alterPcs">Alter Pcs:</label>
+    <input type="number" id="alterPcs" name="alterPcs" style="margin-bottom: 8px;"><br>
+  </div>
 
-  <label for="totalPics">Total Pcs:</label>
-  <input type="number" id="totalPics" name="totalPics" readonly style="margin-bottom: 8px;">
-  `;
+  <div id="totalPicsGroup">
+    <label for="totalPics">Total Pcs:</label>
+    <input type="number" id="totalPics" name="totalPics" style="margin-bottom: 8px;"><br>
+  </div>
+`;
+
 
   const workTypeField = document.getElementById('worktype');
   workTypeField.parentNode.insertBefore(passAlterContainer, workTypeField.nextSibling);
@@ -31,36 +38,44 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   departmentRole.addEventListener('change', function () {
-    const selectedRole = departmentRole.value;
+  const selectedRole = departmentRole.value;
 
-    if (selectedRole === 'threadCutter') {
-      selectWorkTypeByLabel('Thread Cutting');
-      totalPicsContainer.style.display = 'block';
-      passAlterContainer.style.display = 'none';
-    } else if (
-      selectedRole === 'initialChecker' ||
-      selectedRole === 'finalchecker' ||
-      selectedRole === 'RefinalChecker'
-    ) {
-      selectWorkTypeByLabel('Garment Checking');
-      totalPicsContainer.style.display = 'none';
-      passAlterContainer.style.display = 'block';
-    } else if (selectedRole === 'alterman') {
-      selectWorkTypeByLabel('Part Change/Repair/Other');
-      totalPicsContainer.style.display = 'block';
-      passAlterContainer.style.display = 'none';
-    } else {
-      workType.selectedIndex = 0;
-      totalPicsContainer.style.display = 'none';
-      passAlterContainer.style.display = 'none';
-    }
-  });
+  passAlterContainer.style.display = 'block';
+
+  const passPcsGroup = document.getElementById('passPcsGroup');
+  const alterPcsGroup = document.getElementById('alterPcsGroup');
+  const totalPicsGroup = document.getElementById('totalPicsGroup');
+
+  if (selectedRole === 'threadCutter') {
+    selectWorkTypeByLabel('Thread Cutting');
+    passPcsGroup.style.display = 'none';
+    alterPcsGroup.style.display = 'none';
+    totalPicsGroup.style.display = 'block';
+  } else if (
+    selectedRole === 'initialChecker' ||
+    selectedRole === 'finalchecker' ||
+    selectedRole === 'RefinalChecker'
+  ) {
+    selectWorkTypeByLabel('Garment Checking');
+    passPcsGroup.style.display = 'block';
+    alterPcsGroup.style.display = 'block';
+    totalPicsGroup.style.display = 'block';
+  } else if (selectedRole === 'alterman') {
+    selectWorkTypeByLabel('Part Change/Repair/Other');
+    passPcsGroup.style.display = 'none';
+    alterPcsGroup.style.display = 'none';
+    totalPicsGroup.style.display = 'block';
+  } else {
+    workType.selectedIndex = 0;
+    passAlterContainer.style.display = 'none';
+  }
+});
 
   const form = document.getElementById('finishingForm');
 
   // ✅ Web App URLs
   const POST_URL = 'https://script.google.com/macros/s/AKfycbzPVu9jmABvNeDnhh9NN6Vy0W2xuONf087tPaTVZ1QLnAB3m2UbmZl1AnASl_nRCbli/exec';
-  const LOOKUP_URL = 'https://script.google.com/macros/s/AKfycbwtvSRRI1BSrgE94cQAQ4tk-aI70Brbv4N8tQOB8gRxxnG9V9EVHjKaaj5vOP_4PYc_/exec';
+  const LOOKUP_URL = 'https://script.google.com/macros/s/AKfycbwTYc7KMs530d--1cxzyXkIoYWuZToa1k9LzkHUdI3WSUXCW-KBH_Cz4TCioDhNMZ7t/exec';
 
   // ✅ RTF logic: auto-fill style and filter color dropdown
   const rtfField = document.getElementById('rtf');
@@ -81,8 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
     colorDropdown.appendChild(loadingOption);
 
     try {
-      const res = await fetch(`${LOOKUP_URL}?rtf=${encodeURIComponent(rtfValue)}`);
+      const res = await fetch(`${LOOKUP_URL}?lastDigits=${encodeURIComponent(rtfValue)}`);
       const data = await res.json();
+
+      rtfField.value = data.rtf || rtfValue; // Fill full RTF
+      styleField.value = data.style || '';
 
       styleField.value = data.style || '';
 
